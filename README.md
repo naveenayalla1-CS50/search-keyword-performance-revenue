@@ -1,4 +1,4 @@
-```mermaidmindmap
+```mermaid
   root((Adobe Analytics Search Revenue ETL))
     Business Problem
       External Search Engines
