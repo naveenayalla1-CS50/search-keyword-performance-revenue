@@ -2,6 +2,25 @@
 
 **Date:** January 2026
 
+mindmap
+  root((Search Revenue ETL))
+    Business Goal
+      Revenue Analysis
+      Keyword Performance
+      Search Engines
+    Technology Stack
+      AWS Glue
+      PySpark
+      Terraform
+    Data Pipeline
+      Input: Adobe Analytics Data
+      Process: Filter & Aggregate
+      Output: S3 Storage
+    Output File Details
+      Tab-separated format
+      Sorted by Revenue
+      Naming: YYYY-mm-dd_SearchKeywordPerformance.tab
+
 ## Business Problem
 The client wants to understand:  
 **How much revenue is generated from external search engines (Google, Yahoo, MSN/Bing) and which keywords perform best based on revenue?**
