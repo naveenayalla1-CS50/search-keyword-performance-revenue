@@ -1,30 +1,62 @@
-```Adobe Analytics Search Revenue ETL Assessment – Naveen
-Date: January 2026
 mindmap
-  root((Adobe Analytics ETL))
+  root((Adobe Analytics Search Revenue ETL – Naveen))
+    Date: January 2026
     Business Problem
       External Search Engines
         Google
         Yahoo
         MSN/Bing
       Top Performing Keywords
-      Monthly Revenue Trends
+      Revenue Attribution
+        Purchase Events
+        Keyword from Referrer
     Core Technology
-      AWS Glue
+      AWS Glue (Spark ETL)
       PySpark
-      Terraform IaC
+      Terraform (IaC)
+      S3 (Input/Output)
+      CloudWatch Logs
     Data Process
-      Input: Hit-level Data
-      Filter: Purchase Events
-      Extract: Referrer & Keywords
-      Aggregate: Product List Revenue
-    Output File (S3)
-      Tab-separated format
-      Sorted Descending
-      Naming: YYYY-mm-dd_SearchKeywordPerformance.tab
+      Input
+        Hit-level TSV (S3)
+        Key Columns
+          event_list
+          referrer
+          product_list
+      Transform
+        Filter
+          Purchase Event = 1
+        Extract
+          Search Engine Domain
+          Search Keyword
+        Calculate
+          Revenue from product_list
+        Aggregate
+          Sum revenue by (Domain, Keyword)
+        Sort
+          Revenue DESC
+      Output
+        S3 Results Bucket
+        Tab-separated file
+        Header row included
+        Naming Convention
+          YYYY-mm-dd_SearchKeywordPerformance.tab
     Quality & Scale
+      Correctness Checks
+        Input row count > 0
+        Revenue > 0 only on purchases
+        Domain + keyword not null
       Unit Tests
-      Scalable to 10GB+```
+        Referrer parsing
+        Keyword extraction
+        Product revenue parsing
+      Scaling to 10GB+
+        Spark partitioning
+        Avoid coalesce early
+        Write partitioned then finalize name
+      Observability
+        CloudWatch logs
+        Glue metrics
 
 ## Business Problem
 The client wants to understand:  
