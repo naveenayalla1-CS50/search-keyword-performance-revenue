@@ -1,7 +1,5 @@
 # Adobe Analytics Search Revenue ETL Assessment – Naveen
 
-**Display Name:** Naveen  
-**Location:** San Jose, CA  
 **Date:** January 2026
 
 ## Business Problem
@@ -12,7 +10,6 @@ This solution processes Adobe Analytics hit-level data (tab-separated file), fil
 
 **Added Value:**
 - Monthly revenue trends per keyword (to spot seasonality)
-- Bar chart visualization of top 10 keywords by revenue
 - Scalable to 10 GB+ uncompressed files using AWS Glue (serverless Spark ETL)
 
 ## Solution Architecture
@@ -21,7 +18,5 @@ This solution processes Adobe Analytics hit-level data (tab-separated file), fil
 - **Quality:** Unit tests for referrer parsing and revenue calculation
 - **Output Files** (written to S3):
   - `{YYYY-mm-dd}_SearchKeywordPerformance.tab` → total revenue, sorted descending
-  - `{YYYY-mm-dd}_MonthlySearchTrends.tab` → monthly breakdown
-  - `{YYYY-mm-dd}_Top10_Keyword_Revenue_Chart.png` → top 10 keywords visualization
-
-## Repository Contents
+  
+  
