@@ -1,25 +1,33 @@
+mindmap
+  root((Adobe Analytics Search Revenue ETL))
+    Business Problem
+      External Search Engines
+        Google
+        Yahoo
+        MSN/Bing
+      Top Performing Keywords
+      Monthly Revenue Trends
+    Core Technology
+      AWS Glue
+      PySpark
+      Terraform IaC
+    Data Process
+      Input: Hit-level Data
+      Filter: Purchase Events
+      Extract: Referrer & Keywords
+      Aggregate: Product List Revenue
+    Output File (S3)
+      Tab-separated format
+      Sorted Descending
+      Naming: YYYY-mm-dd_SearchKeywordPerformance.tab
+    Quality & Scale
+      Unit Tests
+      Scalable to 10GB+
+
+
 # Adobe Analytics Search Revenue ETL Assessment – Naveen
 
 **Date:** January 2026
-
-mindmap
-  root((Search Revenue ETL))
-    Business Goal
-      Revenue Analysis
-      Keyword Performance
-      Search Engines
-    Technology Stack
-      AWS Glue
-      PySpark
-      Terraform
-    Data Pipeline
-      Input: Adobe Analytics Data
-      Process: Filter & Aggregate
-      Output: S3 Storage
-    Output File Details
-      Tab-separated format
-      Sorted by Revenue
-      Naming: YYYY-mm-dd_SearchKeywordPerformance.tab
 
 ## Business Problem
 The client wants to understand:  
