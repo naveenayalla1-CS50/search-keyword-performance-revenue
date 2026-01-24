@@ -1,3 +1,4 @@
+```mermaid
 mindmap
   root((Adobe Analytics Search Revenue ETL))
     Business Problem
@@ -22,7 +23,7 @@ mindmap
       Naming: YYYY-mm-dd_SearchKeywordPerformance.tab
     Quality & Scale
       Unit Tests
-      Scalable to 10GB+
+      Scalable to 10GB+```
 
 
 # Adobe Analytics Search Revenue ETL Assessment – Naveen
