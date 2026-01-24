@@ -1,5 +1,7 @@
-```mermaid
-  root((Adobe Analytics Search Revenue ETL))
+```Adobe Analytics Search Revenue ETL Assessment – Naveen
+Date: January 2026
+mindmap
+  root((Adobe Analytics ETL))
     Business Problem
       External Search Engines
         Google
@@ -23,10 +25,6 @@
     Quality & Scale
       Unit Tests
       Scalable to 10GB+```
-
-# Adobe Analytics Search Revenue ETL Assessment – Naveen
-
-**Date:** January 2026
 
 ## Business Problem
 The client wants to understand:  
