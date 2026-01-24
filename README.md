@@ -1,5 +1,4 @@
-```mermaid
-mindmap
+```mermaidmindmap
   root((Adobe Analytics Search Revenue ETL))
     Business Problem
       External Search Engines
@@ -24,7 +23,6 @@ mindmap
     Quality & Scale
       Unit Tests
       Scalable to 10GB+```
-
 
 # Adobe Analytics Search Revenue ETL Assessment – Naveen
 
