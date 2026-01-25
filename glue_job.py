@@ -1,6 +1,5 @@
 """
 AWS Glue PySpark Job: Search Keyword Performance from Adobe Analytics Hit-Level Data
-
 This job:
 - Reads tab-delimited hit data from S3
 - Processes it using SearchKeywordPerformanceApp
