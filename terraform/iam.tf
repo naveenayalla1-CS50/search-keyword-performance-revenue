@@ -10,21 +10,21 @@ data "aws_iam_policy_document" "glue_assume" {
   }
 }
 
-resource "aws_iam_role" "glue_role" {
-  name               = "${var.project_name}-glue-role"
-  assume_role_policy = data.aws_iam_policy_document.glue_assume.json
-}
+#resource "aws_iam_role" "glue_role" {
+#  name               = "${var.project_name}-glue-role"
+#  assume_role_policy = data.aws_iam_policy_document.glue_assume.json
+#}
 
 # Minimum S3 + logs perms (tighter than AmazonS3FullAccess)
-data "aws_iam_policy_document" "glue_policy" {
-  statement {
-    sid     = "CloudWatchLogs"
-    actions = [
-      "logs:CreateLogGroup","logs:CreateLogStream","logs:PutLogEvents",
-      "logs:DescribeLogGroups","logs:DescribeLogStreams"
-    ]
-    resources = ["*"]
-  }
+#data "aws_iam_policy_document" "glue_policy" {
+#  statement {
+#    sid     = "CloudWatchLogs"
+#    actions = [
+#      "logs:CreateLogGroup","logs:CreateLogStream","logs:PutLogEvents",
+#      "logs:DescribeLogGroups","logs:DescribeLogStreams"
+#    ]
+#    resources = ["*"]
+#  }
 
   # Read input from raw bucket
   statement {
