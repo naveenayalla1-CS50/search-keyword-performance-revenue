@@ -14,48 +14,54 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      # 1️⃣ Checkout code
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Terraform Import (one-time)
-        working-directory: terraform
-        run: |
-          terraform import aws_iam_role.glue_role search-keyword-performance-glue-role || true
-          terraform import aws_iam_policy.glue_policy arn:aws:iam::821891894533:policy/search-keyword-performance-glue-policy || true
-
-
-      # Recommended: use OIDC (no long-lived keys).
-      # You must create an AWS IAM Role with trust for GitHub OIDC.
+      # 2️⃣ Configure AWS credentials via OIDC
       - name: Configure AWS credentials (OIDC)
         uses: aws-actions/configure-aws-credentials@v4
         with:
           role-to-assume: ${{ secrets.AWS_DEPLOY_ROLE_ARN }}
           aws-region: us-east-2
 
+      # 3️⃣ Setup Terraform
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.6.6
+
+      # 4️⃣ Terraform Init (remote backend)
+      - name: Terraform Init
+        working-directory: terraform
+        run: terraform init -reconfigure
+
+      # 5️⃣ Terraform Import (ONE-TIME, safe to keep)
+      - name: Terraform Import existing IAM resources
+        working-directory: terraform
+        run: |
+          terraform import aws_iam_role.glue_role search-keyword-performance-glue-role || true
+          terraform import aws_iam_policy.glue_policy arn:aws:iam::821891894533:policy/search-keyword-performance-glue-policy || true
+
+      # 6️⃣ Build Glue dependency zip
       - name: Build glue-helper.zip
         run: |
           bash scripts/build_glue_helper_zip.sh
           ls -lh dist/
 
+      # 7️⃣ Upload Glue artifacts to S3
       - name: Upload artifacts to S3
         run: |
           aws s3 cp glue_job.py s3://ad-glue-artifacts/jobs/search_keyword_performance_glue.py
           aws s3 cp dist/glue-helper.zip s3://ad-glue-artifacts/jobs/glue-helper.zip
           aws s3 ls s3://ad-glue-artifacts/jobs/ | tail -n 20
 
-      - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v3
-        with:
-          terraform_version: 1.6.6
-
-      - name: Terraform Init
-        working-directory: terraform
-        run: terraform init
-
+      # 8️⃣ Terraform Plan
       - name: Terraform Plan
         working-directory: terraform
         run: terraform plan
 
+      # 9️⃣ Terraform Apply
       - name: Terraform Apply
         working-directory: terraform
         run: terraform apply -auto-approve
