@@ -16,7 +16,6 @@ from awsglue.utils import getResolvedOptions
 
 from pyspark.context import SparkContext
 
-# Import your main application class
 from app import SearchKeywordPerformanceApp
 
 
