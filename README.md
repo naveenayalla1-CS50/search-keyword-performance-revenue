@@ -12,18 +12,6 @@ Analyze Adobe Analytics hit-level data to answer:
 - Tab-delimited file: `{YYYY-mm-dd}_SearchKeywordPerformance.tab`
   - Columns: `Search Engine Domain`, `Search Keyword`, `Revenue` (summed, sorted descending)
 
-## Solution Overview
-- **Technology**: AWS Glue (serverless Spark ETL) + PySpark
-- **Single-file implementation** for easy deployment (no zip needed)
-- **Key logic**:
-  - Filter purchase events (`event_list` contains "1")
-  - Extract search domain & keyword from referrer
-  - Sum revenue from `product_list`
-  - Aggregate & sort by revenue descending
-- **Input**: S3 TSV/CSV file
-- **Output**: Single tab-delimited file written to S3
-
-
 ##  Solution Overview
 
 **Key features:**
