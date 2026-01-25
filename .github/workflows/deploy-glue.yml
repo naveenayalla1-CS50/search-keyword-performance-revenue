@@ -17,6 +17,13 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Terraform Import (one-time)
+        working-directory: terraform
+        run: |
+          terraform import aws_iam_role.glue_role search-keyword-performance-glue-role || true
+          terraform import aws_iam_policy.glue_policy arn:aws:iam::821891894533:policy/search-keyword-performance-glue-policy || true
+
+
       # Recommended: use OIDC (no long-lived keys).
       # You must create an AWS IAM Role with trust for GitHub OIDC.
       - name: Configure AWS credentials (OIDC)
