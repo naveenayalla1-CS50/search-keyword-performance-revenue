@@ -23,15 +23,64 @@ Analyze Adobe Analytics hit-level data to answer:
 - **Input**: S3 TSV/CSV file
 - **Output**: Single tab-delimited file written to S3
 
+
+##  Solution Overview
+
+**Key features:**
+
+- Reads hit-level TSV data from Amazon S3
+- Filters purchase events (`event_list` contains `1`)
+- Extracts:
+  - External search engine domain (Google, Yahoo, MSN/Bing)
+  - Search keyword from referrer query parameters
+- Aggregates revenue from the `product_list` field
+- Writes a tab-delimited, sorted output file to S3
+
+---
+
+##  Technology Stack
+
+- **Apache Spark (PySpark)**
+- **AWS Glue (Spark ETL)**
+- **Amazon S3** (input & output storage)
+- **CloudWatch Logs & Metrics**
+- **Terraform (IaC)** – optional, for provisioning Glue jobs and IAM roles
+
+---
+
+##  Data Processing Logic
+
+### Input
+- **Source:** Adobe Analytics hit-level data (TSV)
+- **Location:** Amazon S3
+- **Key columns used:**
+  - `event_list`
+  - `referrer`
+  - `product_list`
+
+### Transformations
+1. Filter rows where `event_list` contains purchase event (`1`)
+2. Extract external search engine domain from `referrer`
+3. Extract search keyword from referrer query parameters
+4. Parse revenue from `product_list` (4th semicolon-delimited field)
+5. Aggregate total revenue by `(Search Engine Domain, Search Keyword)`
+6. Sort results by revenue (descending)
+
+### Output
+- **Format:** Tab-separated (`.tab`)
+- **Header:** Included
+- **Sort order:** Revenue DESC
+- **Naming convention:**
+
 ## Deployment Instructions (AWS Glue)
 
 ### 1. Upload the script to S3
-```bash
-'aws s3 cp search_keyword_performance_glue.py \
-  s3://ad-glue-artifacts/jobs/search_keyword_performance_glue.py'
+```bash aws s3 cp search_keyword_performance_glue.py \ s3://ad-glue-artifacts/jobs/search_keyword_performance_glue.py```
 
-### 2. Configure the Glue Job
-### Job name: e.g. search-keyword-performance
+---
+
+## Configure the Glue Job
+## Job name: e.g. search-keyword-performance
 Type: Spark
 Glue version: 4.0 or 5.0
 Script location:
