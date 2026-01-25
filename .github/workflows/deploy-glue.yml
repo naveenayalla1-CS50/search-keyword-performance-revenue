@@ -1,0 +1,54 @@
+name: Deploy AWS Glue (Terraform)
+
+on:
+  push:
+    branches: [ "main" ]
+  workflow_dispatch: {}
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # Recommended: use OIDC (no long-lived keys).
+      # You must create an AWS IAM Role with trust for GitHub OIDC.
+      - name: Configure AWS credentials (OIDC)
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_DEPLOY_ROLE_ARN }}
+          aws-region: us-east-2
+
+      - name: Build glue-helper.zip
+        run: |
+          bash scripts/build_glue_helper_zip.sh
+          ls -lh dist/
+
+      - name: Upload artifacts to S3
+        run: |
+          aws s3 cp glue_job.py s3://ad-glue-artifacts/jobs/search_keyword_performance_glue.py
+          aws s3 cp dist/glue-helper.zip s3://ad-glue-artifacts/jobs/glue-helper.zip
+          aws s3 ls s3://ad-glue-artifacts/jobs/ | tail -n 20
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.6.6
+
+      - name: Terraform Init
+        working-directory: terraform
+        run: terraform init
+
+      - name: Terraform Plan
+        working-directory: terraform
+        run: terraform plan
+
+      - name: Terraform Apply
+        working-directory: terraform
+        run: terraform apply -auto-approve
