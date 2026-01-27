@@ -18,10 +18,10 @@ def build_keyword_performance_df(df: DataFrame) -> DataFrame:
     Transform raw Adobe Analytics hit-level data into keyword performance aggregates.
 
     Steps:
-    1. Apply UDFs to extract domain, keyword, revenue, and purchase flag
-    2. Filter to only purchase events with valid search keywords
-    3. Aggregate total revenue per search engine domain + keyword
-    4. Sort descending by revenue
+    1. Use UDFs to extract the domain, keyword, revenue, and buy flag.
+    2. Filter to purchase events with valid search keywords.
+    3. Calculate total revenue per search engine domain and phrase.
+    4. Sort descending by revenue.
 
     Returns:
         DataFrame with columns:
