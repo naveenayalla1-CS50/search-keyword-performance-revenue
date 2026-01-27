@@ -13,62 +13,79 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
 
+    env:
+      TF_IN_AUTOMATION: "true"
+      TF_INPUT: "0"
+
     steps:
-      # 1️⃣ Checkout code
+      # 1) Checkout code
       - name: Checkout
         uses: actions/checkout@v4
 
-      # 2️⃣ Configure AWS credentials via OIDC
+      # 2) Configure AWS credentials via OIDC
       - name: Configure AWS credentials (OIDC)
         uses: aws-actions/configure-aws-credentials@v4
         with:
           role-to-assume: ${{ secrets.AWS_DEPLOY_ROLE_ARN }}
-          aws-region: us-east-2
+          aws-region: ${{ vars.TF_VAR_AWS_REGION }}
 
-      # 3️⃣ Setup Terraform
+      # 3) Setup Terraform
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
         with:
           terraform_version: 1.6.6
 
-      # 4️⃣ Terraform Init (remote backend)
+      # 4) Terraform Init (remote backend) using REPO VARIABLES (vars.*)
       - name: Terraform Init (remote backend)
         working-directory: terraform
         run: |
           terraform init -reconfigure \
-            -backend-config="bucket=${{ secrets.TF_BACKEND_BUCKET }}" \
-            -backend-config="key=${{ secrets.TF_BACKEND_KEY }}" \
-            -backend-config="region=${{ secrets.TF_BACKEND_REGION }}" \
-            -backend-config="dynamodb_table=${{ secrets.TF_BACKEND_DDB_TABLE }}" \
+            -backend-config="bucket=${{ vars.TF_VAR_TF_STATE_BUCKET }}" \
+            -backend-config="key=${{ vars.TF_VAR_TF_STATE_KEY }}" \
+            -backend-config="region=${{ vars.TF_VAR_AWS_REGION }}" \
+            -backend-config="dynamodb_table=${{ vars.TF_VAR_TF_LOCK_TABLE }}" \
             -backend-config="encrypt=true"
 
-
-      # 5️⃣ Terraform Import (ONE-TIME, safe to keep)
-      - name: Terraform Import existing IAM resources
-        working-directory: terraform
-        run: |
-          terraform import aws_iam_role.glue_role search-keyword-performance-glue-role || true
-          terraform import aws_iam_policy.glue_policy arn:aws:iam::821891894533:policy/search-keyword-performance-glue-policy || true
-
-      # 6️⃣ Build Glue dependency zip
+      # 5) Build Glue dependency zip
       - name: Build glue-helper.zip
         run: |
           bash scripts/build_glue_helper_zip.sh
           ls -lh dist/
 
-      # 7️⃣ Upload Glue artifacts to S3
+      # 6) Upload Glue artifacts to S3 (Secrets)
       - name: Upload artifacts to S3
         run: |
-          aws s3 cp glue_job.py s3://${{ secrets.GLUE_ARTIFACTS_BUCKET }}/${{ secrets.GLUE_SCRIPT_KEY }}
-          aws s3 cp dist/glue-helper.zip s3://${{ secrets.GLUE_ARTIFACTS_BUCKET }}/${{ secrets.GLUE_ZIP_KEY }}
+          aws s3 cp glue_job.py "s3://${{ secrets.GLUE_ARTIFACTS_BUCKET }}/${{ secrets.GLUE_SCRIPT_KEY }}"
+          aws s3 cp dist/glue-helper.zip "s3://${{ secrets.GLUE_ARTIFACTS_BUCKET }}/${{ secrets.GLUE_ZIP_KEY }}"
 
+      # 7) Terraform Validate
+      - name: Terraform Validate
+        working-directory: terraform
+        run: terraform validate
 
-      # 8️⃣ Terraform Plan
+      # 8) Terraform Plan
       - name: Terraform Plan
         working-directory: terraform
-        run: terraform plan
+        env:
+          TF_VAR_aws_region: ${{ vars.TF_VAR_AWS_REGION }}
+          TF_VAR_tf_lock_table: ${{ vars.TF_VAR_TF_LOCK_TABLE }}
+          TF_VAR_tf_state_bucket: ${{ vars.TF_VAR_TF_STATE_BUCKET }}
+          TF_VAR_tf_state_key: ${{ vars.TF_VAR_TF_STATE_KEY }}
+          # If your Terraform needs these as variables too, add them here:
+          TF_VAR_artifacts_bucket: ${{ secrets.GLUE_ARTIFACTS_BUCKET }}
+          TF_VAR_glue_script_key: ${{ secrets.GLUE_SCRIPT_KEY }}
+          TF_VAR_extra_py_files_key: ${{ secrets.GLUE_ZIP_KEY }}
+        run: terraform plan -no-color
 
-      # 9️⃣ Terraform Apply
+      # 9) Terraform Apply
       - name: Terraform Apply
         working-directory: terraform
-        run: terraform apply -auto-approve
+        env:
+          TF_VAR_aws_region: ${{ vars.TF_VAR_AWS_REGION }}
+          TF_VAR_tf_lock_table: ${{ vars.TF_VAR_TF_LOCK_TABLE }}
+          TF_VAR_tf_state_bucket: ${{ vars.TF_VAR_TF_STATE_BUCKET }}
+          TF_VAR_tf_state_key: ${{ vars.TF_VAR_TF_STATE_KEY }}
+          TF_VAR_artifacts_bucket: ${{ secrets.GLUE_ARTIFACTS_BUCKET }}
+          TF_VAR_glue_script_key: ${{ secrets.GLUE_SCRIPT_KEY }}
+          TF_VAR_extra_py_files_key: ${{ secrets.GLUE_ZIP_KEY }}
+        run: terraform apply -auto-approve -no-color
