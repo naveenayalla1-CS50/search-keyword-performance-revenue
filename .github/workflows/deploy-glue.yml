@@ -32,9 +32,16 @@ jobs:
           terraform_version: 1.6.6
 
       # 4️⃣ Terraform Init (remote backend)
-      - name: Terraform Init
+      - name: Terraform Init (remote backend)
         working-directory: terraform
-        run: terraform init -reconfigure
+        run: |
+          terraform init -reconfigure \
+            -backend-config="bucket=${{ secrets.TF_BACKEND_BUCKET }}" \
+            -backend-config="key=${{ secrets.TF_BACKEND_KEY }}" \
+            -backend-config="region=${{ secrets.TF_BACKEND_REGION }}" \
+            -backend-config="dynamodb_table=${{ secrets.TF_BACKEND_DDB_TABLE }}" \
+            -backend-config="encrypt=true"
+
 
       # 5️⃣ Terraform Import (ONE-TIME, safe to keep)
       - name: Terraform Import existing IAM resources
@@ -52,9 +59,9 @@ jobs:
       # 7️⃣ Upload Glue artifacts to S3
       - name: Upload artifacts to S3
         run: |
-          aws s3 cp glue_job.py s3://ad-glue-artifacts/jobs/search_keyword_performance_glue.py
-          aws s3 cp dist/glue-helper.zip s3://ad-glue-artifacts/jobs/glue-helper.zip
-          aws s3 ls s3://ad-glue-artifacts/jobs/ | tail -n 20
+          aws s3 cp glue_job.py s3://${{ secrets.GLUE_ARTIFACTS_BUCKET }}/${{ secrets.GLUE_SCRIPT_KEY }}
+          aws s3 cp dist/glue-helper.zip s3://${{ secrets.GLUE_ARTIFACTS_BUCKET }}/${{ secrets.GLUE_ZIP_KEY }}
+
 
       # 8️⃣ Terraform Plan
       - name: Terraform Plan
