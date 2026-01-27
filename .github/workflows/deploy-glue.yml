@@ -93,3 +93,4 @@ jobs:
           TF_VAR_glue_script_key: ${{ secrets.GLUE_SCRIPT_KEY }}
           TF_VAR_extra_py_files_key: ${{ secrets.GLUE_ZIP_KEY }}
         run: terraform apply -auto-approve -no-color
+        
