@@ -23,16 +23,23 @@ resource "aws_glue_job" "job" {
 
   default_arguments = merge(
     {
-      "--JOB_NAME"               = var.project_name
-      "--INPUT_FILE"             = var.input_file
-      "--OUTPUT_BASE_PATH"       = var.output_base_path
-      "--enable-metrics"         = "true"
-      "--enable-spark-ui"        = "true"
-      "--enable-job-insights"    = "true"
+      "--JOB_NAME"                     = var.project_name
+      "--INPUT_FILE"                   = var.input_file
+      "--OUTPUT_BASE_PATH"             = var.output_base_path
+      "--enable-metrics"               = "true"
+      "--enable-spark-ui"              = "true"
+      "--enable-job-insights"          = "true"
       "--enable-observability-metrics" = "true"
-      "--job-bookmark-option"    = "job-bookmark-disable"
-      "--extra-py-files"         = local.extra_py_files
+      "--job-bookmark-option"          = "job-bookmark-disable"
+      "--extra-py-files"               = local.extra_py_files
     },
-    local.temp_dir == null ? {} : { "--TempDir" = local.temp_dir }
+    local.temp_dir == null ? {} : {
+      "--TempDir" = local.temp_dir
+    }
   )
+
+  depends_on = [
+    aws_s3_object.glue_script,
+    aws_s3_object.extra_py_zip,
+  ]
 }
