@@ -11,8 +11,8 @@ variable "local_extra_py_zip_path" {
 }
 
 locals {
-  glue_script_path   = coalesce(var.local_glue_script_path, "${path.module}/../glue_job.py")
-  extra_py_zip_path  = coalesce(var.local_extra_py_zip_path, "${path.module}/../dist/glue-helper.zip")
+  glue_script_path  = coalesce(var.local_glue_script_path, "${path.module}/../glue_job.py")
+  extra_py_zip_path = coalesce(var.local_extra_py_zip_path, "${path.module}/../dist/glue-helper.zip")
 }
 
 resource "aws_s3_object" "glue_script" {
