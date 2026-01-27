@@ -8,7 +8,6 @@ ZIP="dist/glue-helper.zip"
 
 
 # Collect python modules from src/ and flatten them into the zip root.
-# This makes imports like: `from app import SearchKeywordPerformanceApp` work.
 python_files=$(find src -type f -name "*.py" \
   ! -path "*/__pycache__/*" \
   ! -path "*/.pytest_cache/*")

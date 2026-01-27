@@ -19,7 +19,7 @@ class JobConfig:
     keyword_param: str = "q"           # default for Google/Bing
     coalesce_files: int = 1            # single file output (common for assessments)
 
-    # Optional: Add more configurable settings later
+    # Optional: 
     max_partitions: Optional[int] = None
     log_level: str = "INFO"
 
