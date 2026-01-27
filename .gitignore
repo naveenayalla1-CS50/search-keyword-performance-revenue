@@ -1,0 +1,6 @@
+.terraform/
+terraform.tfstate*
+*.tfvars
+backend.hcl
+dist/
+__pycache__/
