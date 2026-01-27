@@ -31,7 +31,7 @@ resource "aws_glue_job" "job" {
       "--enable-job-insights"    = "true"
       "--enable-observability-metrics" = "true"
       "--job-bookmark-option"    = "job-bookmark-disable"
-      "--extra-py-files"         = local.extra_py_files
+      "--extra-py-files"         = "s3://ad-glue-artifacts/jobs/glue-helper.zip"
     },
     local.temp_dir == null ? {} : { "--TempDir" = local.temp_dir }
   )
