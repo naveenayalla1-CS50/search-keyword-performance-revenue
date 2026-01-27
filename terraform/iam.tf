@@ -4,6 +4,7 @@ data "aws_caller_identity" "current" {}
 data "aws_iam_policy_document" "glue_assume" {
   statement {
     actions = ["sts:AssumeRole"]
+
     principals {
       type        = "Service"
       identifiers = ["glue.amazonaws.com"]
@@ -19,15 +20,14 @@ resource "aws_iam_role" "glue_role" {
 
 # Permissions for Glue job to read input, read artifacts, write output, and write logs
 data "aws_iam_policy_document" "glue_policy" {
-
   statement {
-    sid     = "CloudWatchLogs"
+    sid = "CloudWatchLogs"
     actions = [
       "logs:CreateLogGroup",
       "logs:CreateLogStream",
       "logs:PutLogEvents",
       "logs:DescribeLogGroups",
-      "logs:DescribeLogStreams"
+      "logs:DescribeLogStreams",
     ]
     resources = ["*"]
   }
@@ -38,22 +38,22 @@ data "aws_iam_policy_document" "glue_policy" {
     actions = ["s3:ListBucket", "s3:GetObject"]
     resources = [
       "arn:aws:s3:::${var.raw_bucket}",
-      "arn:aws:s3:::${var.raw_bucket}/*"
+      "arn:aws:s3:::${var.raw_bucket}/*",
     ]
   }
 
   # Write output to processed bucket
   statement {
-    sid     = "WriteProcessed"
+    sid = "WriteProcessed"
     actions = [
       "s3:ListBucket",
       "s3:GetBucketLocation",
       "s3:PutObject",
-      "s3:AbortMultipartUpload"
+      "s3:AbortMultipartUpload",
     ]
     resources = [
       "arn:aws:s3:::${var.processed_bucket}",
-      "arn:aws:s3:::${var.processed_bucket}/*"
+      "arn:aws:s3:::${var.processed_bucket}/*",
     ]
   }
 
@@ -63,7 +63,7 @@ data "aws_iam_policy_document" "glue_policy" {
     actions = ["s3:ListBucket", "s3:GetObject"]
     resources = [
       "arn:aws:s3:::${var.artifacts_bucket}",
-      "arn:aws:s3:::${var.artifacts_bucket}/*"
+      "arn:aws:s3:::${var.artifacts_bucket}/*",
     ]
   }
 
@@ -75,7 +75,7 @@ data "aws_iam_policy_document" "glue_policy" {
       actions = ["s3:ListBucket", "s3:GetObject", "s3:PutObject", "s3:DeleteObject"]
       resources = [
         "arn:aws:s3:::${var.temp_dir_bucket}",
-        "arn:aws:s3:::${var.temp_dir_bucket}/*"
+        "arn:aws:s3:::${var.temp_dir_bucket}/*",
       ]
     }
   }
