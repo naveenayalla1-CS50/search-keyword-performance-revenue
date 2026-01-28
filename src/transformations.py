@@ -12,7 +12,6 @@ from extractors import (
     is_purchase_event,
 )
 
-
 def build_keyword_performance_df(df: DataFrame) -> DataFrame:
     """
     Transform raw Adobe Analytics hit-level data into keyword performance aggregates.
