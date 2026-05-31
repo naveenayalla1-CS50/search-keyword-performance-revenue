@@ -1,4 +1,4 @@
-# Adobe Analytics Search Revenue ETL Pipeline
+# web analytics hit-level data
 
 ## Project Summary
 
