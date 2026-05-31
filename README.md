@@ -1,4 +1,4 @@
-# web analytics hit-level data
+# Web Analytics hit-level data
 
 ## Project Summary
 
