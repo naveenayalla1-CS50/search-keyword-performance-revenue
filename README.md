@@ -1,8 +1,8 @@
-# Web Analytics hit-level data
+# Web Analytics Search Revenue ETL Pipeline
 
 ## Project Summary
 
-This project implements a cloud-based ETL pipeline for analyzing Adobe Analytics hit-level data and identifying revenue generated from external search engine traffic.
+This project implements a cloud-based ETL pipeline for analyzing web analytics hit-level data and identifying revenue generated from external search engine traffic.
 
 The pipeline processes raw tab-separated hit-level data, filters purchase events, extracts search engine domains and search keywords from referrer URLs, parses revenue from product-level fields, and produces a revenue-ranked output file for business reporting.
 
@@ -34,7 +34,7 @@ The output is sorted by revenue in descending order.
 
 Key features:
 
-* Reads Adobe Analytics hit-level TSV data from Amazon S3
+* Reads web analytics hit-level TSV data from Amazon S3
 * Filters purchase events where `event_list` contains event `1`
 * Extracts external search engine domains from referrer URLs
 * Extracts search keywords from referrer query parameters
@@ -71,7 +71,7 @@ Key features:
 
 ### Input
 
-Source: Adobe Analytics hit-level data in TSV format
+Source: Web analytics hit-level data in TSV format
 Location: Amazon S3
 
 Key columns used:
@@ -115,10 +115,10 @@ This pipeline helps marketing and analytics teams identify which external search
 
 ## Deployment Instructions for AWS Glue
 
-### 1. Upload the script to S3
+### 1. Upload the Script to S3
 
 ```bash
-aws s3 cp search_keyword_performance_glue.py s3://ad-glue-artifacts/jobs/search_keyword_performance_glue.py
+aws s3 cp search_keyword_performance_glue.py s3://web-analytics-glue-artifacts/jobs/search_keyword_performance_glue.py
 ```
 
 ### 2. Configure the AWS Glue Job
@@ -142,14 +142,14 @@ Job timeout: 60 minutes
 Script location:
 
 ```text
-s3://ad-glue-artifacts/jobs/search_keyword_performance_glue.py
+s3://web-analytics-glue-artifacts/jobs/search_keyword_performance_glue.py
 ```
 
 Job parameters:
 
 ```text
---INPUT_FILE         s3://ad-raw-artifacts/input/dt=23-01-2026/data.csv
---OUTPUT_BASE_PATH   s3://ad-processed-artifacts/results/
+--INPUT_FILE         s3://web-analytics-raw-data/input/dt=23-01-2026/data.csv
+--OUTPUT_BASE_PATH   s3://web-analytics-processed-results/results/
 ```
 
 ### 3. Run the Job
@@ -161,12 +161,12 @@ Start the AWS Glue job from the AWS Console or CLI. For small sample data, the j
 After a successful run, output will be written to a date-named folder such as:
 
 ```text
-s3://ad-processed-artifacts/results/2026-01-24_SearchKeywordPerformance.tab/
+s3://web-analytics-processed-results/results/2026-01-24_SearchKeywordPerformance.tab/
 ```
 
 ## Debugging Common Issues
 
-### No output file in S3
+### No Output File in S3
 
 Check AWS CloudWatch Logs from the Glue job run and search for:
 
@@ -182,7 +182,7 @@ If output records are `0`, verify that the input file contains:
 * Valid external search engine referrers
 * Valid revenue values in `product_list`
 
-### Job succeeds but results are empty
+### Job Succeeds but Results Are Empty
 
 Possible causes:
 
@@ -191,19 +191,19 @@ Possible causes:
 * Search keywords are missing from query parameters
 * Revenue values are missing or malformed
 
-### Output path issue
+### Output Path Issue
 
 Confirm that `--OUTPUT_BASE_PATH` ends with `/`.
 
 Example:
 
 ```text
-s3://ad-processed-artifacts/results/
+s3://web-analytics-processed-results/results/
 ```
 
 ## Example Test Case
 
-Using the sample assessment dataset, the expected output includes two revenue-producing search keyword records with a total revenue of `$540.00`.
+Using synthetic sample test data, the expected output includes two revenue-producing search keyword records with a total revenue of `$540.00`.
 
 ## Suggested Future Enhancements
 
@@ -215,6 +215,10 @@ Using the sample assessment dataset, the expected output includes two revenue-pr
 * Add Snowflake or BigQuery implementation
 * Add architecture diagram
 * Add sample CloudWatch log output
+
+## Data Privacy Note
+
+This project is a generic portfolio and open-source example. It does not include proprietary, confidential, or company-provided datasets. Any sample data or examples should be synthetic and used only for demonstration purposes.
 
 ## Author
 
